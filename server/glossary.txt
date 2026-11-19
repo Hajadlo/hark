@@ -1,0 +1,22 @@
+# Terms the cleanup LLM spells exactly as written. One per line; edits apply
+# to the next dictation without a restart. Add mishearings after a colon:
+# Kubernetes: cooper netties, cuban eddies
+# The live copy is glossary.txt in the gateway's state directory; this file
+# is only the starter list. Put your own names, products and jargon here.
+Claude Code
+Codex
+T3 Code
+Tailscale
+Tailscale Serve
+GitHub
+PR
+Ollama
+Parakeet
+Whisper
+Grafana
+ClickHouse
+Kafka
+worktree
+subagent
+MCP
+hark

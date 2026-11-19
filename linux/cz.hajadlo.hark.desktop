@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Hark
+Comment=Dictation for KDE Wayland
+Exec=hark run
+Icon=audio-input-microphone
+NoDisplay=true
+Categories=Utility;

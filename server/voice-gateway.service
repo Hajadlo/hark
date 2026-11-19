@@ -1,0 +1,15 @@
+[Unit]
+Description=Private dictation: speech to text on the GPU, LLM cleanup, history
+After=network-online.target ollama.service
+
+[Service]
+Type=simple
+EnvironmentFile=-%h/.config/voice-gateway.env
+ExecStart=%h/.local/share/voice-gateway/venv/bin/python -u %h/.local/lib/hark-server/voice_gateway.py
+Restart=on-failure
+RestartSec=10
+UMask=0077
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

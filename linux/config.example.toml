@@ -1,0 +1,23 @@
+url = "https://gpu-host.your-tailnet.ts.net:8766"
+token = "REPLACE_WITH_SERVER_TOKEN_AT_LEAST_32_CHARACTERS"
+device = "desktop" # use "laptop" on the laptop
+# A release strictly before tap_ms toggles; a release at/after it stops.
+tap_ms = 300
+# Omit to follow the system default. `hark audio-devices` lists ALSA names.
+# input_device = "default"
+sounds = true
+insert = "paste" # "print" for testing without typing
+# Wait after Ctrl+V before restoring the original clipboard (Handy default).
+# Increase if the focused application reads the clipboard slowly (0–1000 ms).
+restore_delay_ms = 60
+overlay = true # click-through recording/processing chip; no keyboard focus
+# Omit to follow KDE's first output, including monitor hot-plug and laptop lid changes.
+# overlay_output = "DP-4"
+
+[[shortcuts]]
+key = "Ctrl+Space"
+mode = "clean"
+
+[[shortcuts]]
+key = "Ctrl+Shift+Space"
+mode = "raw"

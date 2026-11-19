@@ -1,0 +1,16 @@
+01	en	Open the pull request for the hark server and ask Codex to review the history endpoint.
+02	en	The build failed on the desktop because the Gradle cache was missing, so rerun it in the container.
+03	en	Let's move the gateway to the AMD server next week and measure the latency again.
+04	en	Please summarize the last three commits and tell me which tests are still failing.
+05	en	Add a glossary term for Tailscale Serve and restart the voice gateway service.
+06	en	I think the bubble should be a bit smaller and slightly more transparent over the keyboard.
+07	en+cs	I'm meeting Jiří at the café in Holešovice around six, so remind me at half past five.
+08	en+cs	Book a table at Lokál in Karlín for Friday and send the address to Petr.
+09	en+cs	The tram from Vinohrady to Smíchov takes about twenty minutes, then I'll walk to Anděl.
+10	en+cs	Tell Šárka that the Kofola and the chlebíčky for the party are already in the fridge.
+11	en+cs	My grandmother lives in České Budějovice and my uncle Přemysl is in Ostrava.
+12	cs+en	Pushni ten branch a otevři pull request, pak mi napiš, jestli prošly testy.
+13	cs+en	Ten deploy na desktop spadl, protože chyběl token, tak to prosím pusť znovu.
+14	cs+en	Zítra ráno mám standup a potom review s Petrem, takže mi připrav krátký summary.
+15	cs+en	Můžeš mi otevřít ten worktree a zkontrolovat, proč ten Codex agent nedoběhl?
+16	cs+en	Na víkend jedu do Brna, tak mi prosím najdi vlak, který jede kolem deváté ráno.

@@ -1,0 +1,11 @@
+<resources>
+    <style name="Theme.Hark" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+    <style name="Theme.Hark.Recognizer" parent="@android:style/Theme.DeviceDefault.Dialog.NoActionBar">
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
+</resources>

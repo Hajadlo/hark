@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+target/
+build/
+.gradle/
+local.properties
+*.apk
+.scratch/
+*.keystore
+*.jks
+*.sqlite3
+.claude/worktrees/
+android/.android/
+android/.kotlin/

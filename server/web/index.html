@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>hark</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --text: #1d1d1f;
+    --muted: #6b6b70;
+    --line: #dcdce0;
+    --accent: #2f5fa6;
+    --accent-text: #ffffff;
+    --focus: #2f5fa6;
+    --ok: #2a7a3b;
+    --danger: #a63a2f;
+    --raw-bg: #f1f1f4;
+    --toast-bg: #1d1d1f;
+    --toast-text: #fafafa;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151517;
+      --surface: #1e1e21;
+      --text: #e8e8ea;
+      --muted: #9a9aa1;
+      --line: #333338;
+      --accent: #8ab0ec;
+      --accent-text: #0f1a2c;
+      --focus: #8ab0ec;
+      --ok: #7fcf8f;
+      --danger: #f0917f;
+      --raw-bg: #27272b;
+      --toast-bg: #e8e8ea;
+      --toast-text: #151517;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .top-inner, main {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  .top-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 3.25rem;
+  }
+  h1 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+  [role="tablist"] {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: auto;
+  }
+  [role="tab"] {
+    appearance: none;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    padding: 0.9rem 0.6rem 0.75rem;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+  }
+  [role="tab"][aria-selected="true"] {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+  main { padding-top: 1rem; padding-bottom: 5rem; }
+  section[hidden] { display: none; }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .filters input[type="search"] {
+    flex: 1 1 14rem;
+    min-width: 0;
+  }
+  .filters select { flex: 0 1 auto; }
+  input, select, button {
+    font: inherit;
+    color: inherit;
+  }
+  input[type="search"], input[type="text"], select {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0.5rem 0.65rem;
+    min-height: 2.5rem;
+  }
+  input[type="search"] { -webkit-appearance: none; appearance: none; }
+  button {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+    min-height: 2.25rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  button:hover:not(:disabled) { border-color: var(--muted); }
+  button:disabled { opacity: 0.55; cursor: default; }
+  button.primary {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  .status {
+    min-height: 1.5rem;
+    margin: 0 0 0.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .status.error { color: var(--danger); }
+
+  .entries, .terms {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .entries[aria-busy="true"], .corrections[aria-busy="true"], .terms[aria-busy="true"] { opacity: 0.55; }
+  .entry {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.6rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+  }
+  .meta .flag { color: var(--danger); }
+  .text {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .raw {
+    margin: 0.5rem 0 0;
+    padding: 0.5rem 0.65rem;
+    background: var(--raw-bg);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 0.92rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .raw::before { content: "raw: "; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+  }
+  .actions button { font-size: 0.9rem; min-height: 2rem; padding: 0.25rem 0.6rem; }
+  button.done { color: var(--ok); border-color: var(--ok); }
+  .more {
+    display: flex;
+    justify-content: center;
+    min-height: 2.75rem;
+    margin-top: 0.5rem;
+  }
+  /* Out of the layout until the first page renders, so it never moves while loading. */
+  .more button[data-empty="true"] { display: none; }
+
+  .corrections {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .corrections th, .corrections td {
+    text-align: left;
+    padding: 0.5rem 0.65rem;
+    border-top: 1px solid var(--line);
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+  }
+  .corrections th { border-top: 0; color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+  .corrections th.count, .corrections td.count { text-align: right; font-variant-numeric: tabular-nums; width: 3.5rem; white-space: nowrap; }
+  .corrections td.action { width: 1%; text-align: right; white-space: nowrap; }
+  .corrections td.pair { overflow-wrap: normal; }
+  .corrections .arrow { color: var(--muted); padding: 0 0.3rem; }
+  .corrections button { font-size: 0.9rem; min-height: 2rem; padding: 0.25rem 0.6rem; }
+  @media (max-width: 480px) {
+    .corrections th.when, .corrections td.when { display: none; }
+  }
+
+  .glossary-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .glossary-form input { flex: 1 1 auto; min-width: 0; }
+  .terms li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.65rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-top-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .terms li:first-child { border-top-width: 1px; border-radius: 8px 8px 0 0; }
+  .terms li:last-child { border-radius: 0 0 8px 8px; }
+  .terms li:only-child { border-radius: 8px; }
+  .terms button { font-size: 0.9rem; min-height: 2rem; padding: 0.25rem 0.6rem; }
+
+  #toast {
+    position: fixed;
+    left: 50%;
+    bottom: 1.25rem;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 2rem);
+    background: var(--toast-bg);
+    color: var(--toast-text);
+    padding: 0.55rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+    z-index: 3;
+  }
+  #toast.show { opacity: 1; }
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <h1>hark</h1>
+    <nav role="tablist" aria-label="Views">
+      <button type="button" role="tab" id="tab-history" aria-controls="view-history" aria-selected="true" data-view="history">History</button>
+      <button type="button" role="tab" id="tab-corrections" aria-controls="view-corrections" aria-selected="false" tabindex="-1" data-view="corrections">Corrections</button>
+      <button type="button" role="tab" id="tab-glossary" aria-controls="view-glossary" aria-selected="false" tabindex="-1" data-view="glossary">Glossary</button>
+    </nav>
+  </div>
+</header>
+<main>
+  <section id="view-history" role="tabpanel" aria-labelledby="tab-history">
+    <form class="filters" id="filters">
+      <input type="search" id="q" placeholder="Search" aria-label="Search history" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <select id="device" aria-label="Device"><option value="">All devices</option></select>
+      <select id="mode" aria-label="Mode"><option value="">All modes</option></select>
+    </form>
+    <p class="status" id="history-status" aria-live="polite"></p>
+    <ol class="entries" id="entries" aria-label="Dictations"></ol>
+    <div class="more"><button type="button" id="more" data-empty="true">Load more</button></div>
+  </section>
+
+  <section id="view-corrections" role="tabpanel" aria-labelledby="tab-corrections" hidden>
+    <p class="status" id="corrections-status" aria-live="polite"></p>
+    <table class="corrections" id="corrections">
+      <thead>
+        <tr><th scope="col">Heard → written</th><th scope="col" class="count">Times</th><th scope="col" class="when">Last</th><th scope="col"><span class="sr-only">Action</span></th></tr>
+      </thead>
+      <tbody id="corrections-body"></tbody>
+    </table>
+  </section>
+
+  <section id="view-glossary" role="tabpanel" aria-labelledby="tab-glossary" hidden>
+    <form class="glossary-form" id="glossary-form">
+      <input type="text" id="term" placeholder="New term" aria-label="New glossary term" maxlength="64" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button type="submit" class="primary">Add</button>
+    </form>
+    <p class="status" id="glossary-status" aria-live="polite"></p>
+    <ul class="terms" id="terms" aria-label="Glossary terms"></ul>
+  </section>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<template id="entry-template">
+  <li class="entry">
+    <div class="meta"><time></time><span class="device"></span><span class="mode"></span><span class="flag"></span></div>
+    <p class="text"></p>
+    <p class="raw" hidden></p>
+    <div class="actions">
+      <button type="button" class="copy">Copy</button>
+      <button type="button" class="toggle-raw" aria-expanded="false" hidden>Raw</button>
+      <button type="button" class="add">Add to glossary</button>
+    </div>
+  </li>
+</template>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const PAGE = 50;
+
+  // ---- API -------------------------------------------------------------
+  async function api(path, options = {}) {
+    const headers = { "X-Hark-Web": "1" };
+    let body;
+    if (options.body !== undefined) {
+      headers["Content-Type"] = "application/json";
+      body = JSON.stringify(options.body);
+    }
+    let response;
+    try {
+      response = await fetch(path, { method: options.method || "GET", headers, body, credentials: "same-origin" });
+    } catch (error) {
+      throw new Error("Network error: " + (error && error.message ? error.message : "request failed"));
+    }
+    let payload = null;
+    try { payload = await response.json(); } catch (error) { payload = null; }
+    if (!response.ok) {
+      const message = payload && payload.error && payload.error.message;
+      throw new Error(message || ("Request failed (" + response.status + ")"));
+    }
+    return payload;
+  }
+
+  // ---- Toast -----------------------------------------------------------
+  const toastEl = $("toast");
+  let toastTimer = 0;
+  function toast(message, ms = 2500) {
+    toastEl.textContent = message;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), ms);
+  }
+  function setStatus(el, message, error = false) {
+    el.textContent = message || "";
+    el.classList.toggle("error", Boolean(error));
+  }
+
+  // ---- Views -----------------------------------------------------------
+  const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+  const dirty = { corrections: true, glossary: true };
+  let currentView = "";
+
+  function showView(name, push = true) {
+    if (!tabs.some((tab) => tab.dataset.view === name)) name = "history";
+    for (const tab of tabs) {
+      const selected = tab.dataset.view === name;
+      tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+      $(tab.getAttribute("aria-controls")).hidden = !selected;
+    }
+    if (push && location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
+    const changed = currentView !== name;
+    currentView = name;
+    if (name === "corrections" && (dirty.corrections || changed)) loadCorrections();
+    if (name === "glossary" && (dirty.glossary || changed)) loadGlossary();
+  }
+  for (const tab of tabs) {
+    tab.addEventListener("click", () => showView(tab.dataset.view));
+    tab.addEventListener("keydown", (event) => {
+      const index = tabs.indexOf(tab);
+      let next = -1;
+      if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+      else if (event.key === "ArrowLeft") next = (index + tabs.length - 1) % tabs.length;
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = tabs.length - 1;
+      if (next >= 0) {
+        event.preventDefault();
+        tabs[next].focus();
+        showView(tabs[next].dataset.view);
+      }
+    });
+  }
+  window.addEventListener("hashchange", () => showView(location.hash.slice(1), false));
+
+  // ---- Time ------------------------------------------------------------
+  const timeFormat = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit" });
+  const dateFormat = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  const fullFormat = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const longFormat = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  function sameDay(a, b) {
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+  function formatTime(iso) {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return { label: iso, title: iso };
+    const now = new Date();
+    const title = fullFormat.format(date);
+    if (sameDay(date, now)) {
+      const seconds = Math.max(0, (now - date) / 1000);
+      if (seconds < 60) return { label: "just now", title };
+      if (seconds < 3600) return { label: Math.floor(seconds / 60) + " min ago", title };
+      return { label: Math.floor(seconds / 3600) + " h ago, " + timeFormat.format(date), title };
+    }
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (sameDay(date, yesterday)) return { label: "Yesterday " + timeFormat.format(date), title };
+    if (date.getFullYear() === now.getFullYear()) return { label: dateFormat.format(date), title };
+    return { label: longFormat.format(date), title };
+  }
+
+  // ---- Clipboard -------------------------------------------------------
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (error) {
+        // Fall through to the legacy path.
+      }
+    }
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.top = "0";
+    area.style.left = "0";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    const selection = document.getSelection();
+    const saved = selection && selection.rangeCount ? selection.getRangeAt(0) : null;
+    area.focus();
+    area.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (error) { ok = false; }
+    document.body.removeChild(area);
+    if (saved && selection) {
+      selection.removeAllRanges();
+      selection.addRange(saved);
+    }
+    return ok;
+  }
+  function flash(button, label, done = true) {
+    const original = button.dataset.label || button.textContent;
+    button.dataset.label = original;
+    button.textContent = label;
+    button.classList.toggle("done", done);
+    clearTimeout(button._flashTimer);
+    button._flashTimer = setTimeout(() => {
+      button.textContent = original;
+      button.classList.remove("done");
+    }, 1500);
+  }
+
+  // ---- Glossary writes -------------------------------------------------
+  async function addTerm(term) {
+    term = (term || "").trim();
+    if (!term) return null;
+    const result = await api("/v1/glossary", { method: "POST", body: { term } });
+    dirty.corrections = true;
+    dirty.glossary = true;
+    toast(result.added ? "Added “" + term + "” to the glossary" : "“" + term + "” is already in the glossary");
+    return result;
+  }
+  function selectedTextWithin(element) {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || !selection.rangeCount) return "";
+    if (!element.contains(selection.anchorNode) || !element.contains(selection.focusNode)) return "";
+    return selection.toString().replace(/\s+/g, " ").trim();
+  }
+
+  // ---- History ---------------------------------------------------------
+  const qInput = $("q");
+  const deviceSelect = $("device");
+  const modeSelect = $("mode");
+  const entriesEl = $("entries");
+  const moreButton = $("more");
+  const historyStatus = $("history-status");
+  const entryTemplate = $("entry-template");
+  const state = { params: null, nextBefore: null, loading: false, seq: 0, count: 0 };
+  const knownDevices = new Set(["desktop", "laptop", "phone"]);
+  const knownModes = new Set();
+
+  function ensureOption(select, set, value) {
+    if (!value || set.has(value)) return;
+    set.add(value);
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    select.appendChild(option);
+  }
+  for (const device of knownDevices) {
+    const option = document.createElement("option");
+    option.value = device;
+    option.textContent = device;
+    deviceSelect.appendChild(option);
+  }
+
+  function renderEntry(entry) {
+    const node = entryTemplate.content.firstElementChild.cloneNode(true);
+    const time = node.querySelector("time");
+    const when = formatTime(entry.time);
+    time.dateTime = entry.time;
+    time.textContent = when.label;
+    time.title = when.title;
+    node.querySelector(".device").textContent = entry.device;
+    node.querySelector(".mode").textContent = entry.mode;
+    const flag = node.querySelector(".flag");
+    if (entry.cleanup === "failed" || entry.cleanup === "rejected") flag.textContent = "cleanup " + entry.cleanup;
+    else flag.remove();
+    const textEl = node.querySelector(".text");
+    textEl.textContent = entry.text;
+    const rawEl = node.querySelector(".raw");
+    const toggle = node.querySelector(".toggle-raw");
+    if (entry.raw && entry.raw !== entry.text) {
+      rawEl.textContent = entry.raw;
+      toggle.hidden = false;
+      toggle.addEventListener("click", () => {
+        const open = rawEl.hidden;
+        rawEl.hidden = !open;
+        toggle.setAttribute("aria-expanded", String(open));
+        toggle.textContent = open ? "Hide raw" : "Raw";
+      });
+    } else {
+      rawEl.remove();
+      toggle.remove();
+    }
+    const copy = node.querySelector(".copy");
+    copy.addEventListener("click", async () => {
+      const ok = await copyText(entry.text);
+      flash(copy, ok ? "Copied" : "Copy failed", ok);
+      if (!ok) toast("Copy failed: the clipboard is unavailable here.", 4000);
+    });
+    const add = node.querySelector(".add");
+    // Keep the user's text selection: a mouse press on the button must not collapse it.
+    add.addEventListener("pointerdown", (event) => event.preventDefault());
+    add.addEventListener("click", async () => {
+      let term = selectedTextWithin(node);
+      if (!term) term = window.prompt("Term to add to the glossary:", "");
+      if (term === null) return;
+      term = term.trim();
+      if (!term) return;
+      add.disabled = true;
+      try {
+        await addTerm(term);
+        flash(add, "Added");
+      } catch (error) {
+        toast(error.message, 5000);
+      } finally {
+        add.disabled = false;
+      }
+    });
+    return node;
+  }
+
+  function filterParams() {
+    const params = new URLSearchParams();
+    const q = qInput.value.trim();
+    if (q) params.set("q", q);
+    if (deviceSelect.value) params.set("device", deviceSelect.value);
+    if (modeSelect.value) params.set("mode", modeSelect.value);
+    params.set("limit", String(PAGE));
+    return params;
+  }
+
+  function historyQuery(params, before) {
+    params = new URLSearchParams(params);
+    if (before) params.set("before", String(before));
+    return "/v1/history?" + params.toString();
+  }
+
+  async function loadHistory(reset) {
+    const seq = ++state.seq;
+    state.loading = true;
+    entriesEl.setAttribute("aria-busy", "true");
+    moreButton.disabled = true;
+    setStatus(historyStatus, reset ? "Searching…" : "Loading more…");
+    // A cursor belongs to the query that produced it: a new query drops the old cursor before its
+    // request goes out, and Load more pages the list on screen (state.params), not the live inputs.
+    if (reset) state.nextBefore = null;
+    const params = reset ? filterParams() : state.params;
+    const before = reset ? null : state.nextBefore;
+    let result;
+    try {
+      result = await api(historyQuery(params, before));
+    } catch (error) {
+      if (seq !== state.seq) return;
+      state.loading = false;
+      entriesEl.setAttribute("aria-busy", "false");
+      moreButton.disabled = state.nextBefore === null;
+      setStatus(historyStatus, error.message, true);
+      return;
+    }
+    if (seq !== state.seq) return;
+    state.params = params;
+    const fragment = document.createDocumentFragment();
+    for (const entry of result.data) {
+      ensureOption(deviceSelect, knownDevices, entry.device);
+      ensureOption(modeSelect, knownModes, entry.mode);
+      fragment.appendChild(renderEntry(entry));
+    }
+    if (reset) {
+      entriesEl.replaceChildren(fragment);
+      state.count = result.data.length;
+    } else {
+      entriesEl.appendChild(fragment);
+      state.count += result.data.length;
+    }
+    state.nextBefore = result.next_before;
+    state.loading = false;
+    entriesEl.setAttribute("aria-busy", "false");
+    const filtered = params.has("q") || params.has("device") || params.has("mode");
+    if (state.count === 0) {
+      setStatus(historyStatus, filtered ? "Nothing matches." : "No dictations yet.");
+    } else {
+      setStatus(historyStatus, state.count + (state.nextBefore === null ? "" : "+") + (state.count === 1 ? " dictation" : " dictations"));
+    }
+    moreButton.dataset.empty = String(state.count === 0);
+    if (state.nextBefore === null) {
+      moreButton.textContent = "That’s all";
+      moreButton.disabled = true;
+    } else {
+      moreButton.textContent = "Load more";
+      moreButton.disabled = false;
+    }
+  }
+
+  let debounce = 0;
+  qInput.addEventListener("input", () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => loadHistory(true), 250);
+  });
+  $("filters").addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearTimeout(debounce);
+    loadHistory(true);
+  });
+  deviceSelect.addEventListener("change", () => loadHistory(true));
+  modeSelect.addEventListener("change", () => loadHistory(true));
+  moreButton.addEventListener("click", () => {
+    if (!state.loading && state.nextBefore !== null) loadHistory(false);
+  });
+
+  async function loadModes() {
+    try {
+      const result = await api("/v1/models");
+      for (const model of result.data) ensureOption(modeSelect, knownModes, model.id);
+    } catch (error) {
+      // The mode filter still fills from the entries that load.
+    }
+  }
+
+  // ---- Corrections -----------------------------------------------------
+  const correctionsBody = $("corrections-body");
+  const correctionsStatus = $("corrections-status");
+  const correctionsTable = $("corrections");
+
+  function renderCorrection(row) {
+    const tr = document.createElement("tr");
+    const pair = document.createElement("td");
+    pair.className = "pair";
+    const rawSpan = document.createElement("span");
+    rawSpan.textContent = row.raw;
+    const arrow = document.createElement("span");
+    arrow.className = "arrow";
+    arrow.textContent = "→";
+    const finalSpan = document.createElement("strong");
+    finalSpan.textContent = row.final;
+    pair.append(rawSpan, arrow, finalSpan);
+    const count = document.createElement("td");
+    count.className = "count";
+    count.textContent = String(row.count);
+    const when = document.createElement("td");
+    when.className = "when";
+    const stamp = formatTime(row.last_time);
+    when.textContent = stamp.label;
+    when.title = stamp.title;
+    const action = document.createElement("td");
+    action.className = "action";
+    if (row.in_glossary) {
+      // The disabled Add button carries the mark itself, so the row stays narrow on a phone.
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "In glossary";
+      button.disabled = true;
+      button.title = row.final + " is already in the glossary";
+      button.setAttribute("aria-label", "Add " + row.final + " (already in the glossary)");
+      action.appendChild(button);
+    } else {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "Add";
+      button.setAttribute("aria-label", "Add " + row.final + " to the glossary");
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        try {
+          await addTerm(row.final);
+          await loadCorrections();
+        } catch (error) {
+          button.disabled = false;
+          toast(error.message, 5000);
+        }
+      });
+      action.appendChild(button);
+    }
+    tr.append(pair, count, when, action);
+    return tr;
+  }
+
+  async function loadCorrections() {
+    correctionsTable.setAttribute("aria-busy", "true");
+    setStatus(correctionsStatus, "Loading…");
+    try {
+      const result = await api("/v1/corrections?limit=200");
+      const fragment = document.createDocumentFragment();
+      for (const row of result.data) fragment.appendChild(renderCorrection(row));
+      correctionsBody.replaceChildren(fragment);
+      dirty.corrections = false;
+      setStatus(correctionsStatus, result.data.length
+        ? result.data.length + (result.data.length === 1 ? " substitution" : " substitutions") + " across " + result.entries_scanned + " cleaned dictations"
+        : "No substitutions yet (" + result.entries_scanned + " cleaned dictations scanned).");
+    } catch (error) {
+      setStatus(correctionsStatus, error.message, true);
+    } finally {
+      correctionsTable.setAttribute("aria-busy", "false");
+    }
+  }
+
+  // ---- Glossary --------------------------------------------------------
+  const termsEl = $("terms");
+  const glossaryStatus = $("glossary-status");
+  const termInput = $("term");
+  const glossaryForm = $("glossary-form");
+
+  function renderTerms(terms) {
+    const fragment = document.createDocumentFragment();
+    for (const term of terms) {
+      const li = document.createElement("li");
+      const span = document.createElement("span");
+      span.textContent = term;
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "Remove";
+      remove.setAttribute("aria-label", "Remove " + term);
+      remove.addEventListener("click", async () => {
+        remove.disabled = true;
+        try {
+          const result = await api("/v1/glossary?term=" + encodeURIComponent(term), { method: "DELETE" });
+          dirty.corrections = true;
+          renderTerms(result.terms);
+          toast(result.removed ? "Removed “" + term + "”" : "“" + term + "” was already gone");
+        } catch (error) {
+          remove.disabled = false;
+          toast(error.message, 5000);
+        }
+      });
+      li.append(span, remove);
+      fragment.appendChild(li);
+    }
+    termsEl.replaceChildren(fragment);
+    setStatus(glossaryStatus, terms.length ? terms.length + (terms.length === 1 ? " term" : " terms") : "The glossary is empty.");
+  }
+
+  async function loadGlossary() {
+    termsEl.setAttribute("aria-busy", "true");
+    setStatus(glossaryStatus, "Loading…");
+    try {
+      const result = await api("/v1/glossary");
+      renderTerms(result.terms);
+      dirty.glossary = false;
+    } catch (error) {
+      setStatus(glossaryStatus, error.message, true);
+    } finally {
+      termsEl.setAttribute("aria-busy", "false");
+    }
+  }
+
+  glossaryForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const term = termInput.value.trim();
+    if (!term) return;
+    const button = glossaryForm.querySelector("button");
+    button.disabled = true;
+    try {
+      const result = await addTerm(term);
+      termInput.value = "";
+      renderTerms(result.terms);
+      dirty.glossary = false;
+    } catch (error) {
+      toast(error.message, 5000);
+    } finally {
+      button.disabled = false;
+      termInput.focus();
+    }
+  });
+
+  // ---- Start -----------------------------------------------------------
+  loadModes();
+  loadHistory(true);
+  showView(location.hash.slice(1) || "history", false);
+})();
+</script>
+</body>
+</html>

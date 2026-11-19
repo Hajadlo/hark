@@ -1,0 +1,19 @@
+[Unit]
+Description=Hark dictation
+After=graphical-session.target
+BindsTo=graphical-session.target
+# KDE may be unavailable throughout a session restart; keep retrying every 3 s.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/hark run
+Restart=on-failure
+RestartSec=3
+# The clipboard owner must survive daemon shutdown until ownership changes.
+KillMode=process
+TimeoutStopSec=5
+
+[Install]
+WantedBy=graphical-session.target
+Alias=hark.service

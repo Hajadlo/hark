@@ -1,0 +1,12 @@
+FROM docker.io/library/eclipse-temurin:17-jdk-jammy
+RUN apt-get update && apt-get install -y --no-install-recommends curl unzip && rm -rf /var/lib/apt/lists/*
+ENV ANDROID_HOME=/opt/android-sdk ANDROID_SDK_ROOT=/opt/android-sdk
+ENV PATH=/opt/android-sdk/cmdline-tools/latest/bin:$PATH
+ARG COMMAND_TOOLS=16111833
+RUN mkdir -p /opt/android-sdk/cmdline-tools && \
+    curl -fsSL https://dl.google.com/android/repository/commandlinetools-linux-${COMMAND_TOOLS}_latest.zip -o /tmp/tools.zip && \
+    unzip -q /tmp/tools.zip -d /opt/android-sdk/cmdline-tools && \
+    mv /opt/android-sdk/cmdline-tools/cmdline-tools /opt/android-sdk/cmdline-tools/latest && rm /tmp/tools.zip && \
+    yes | sdkmanager --licenses >/dev/null
+RUN sdkmanager "platforms;android-37.0" "build-tools;36.0.0" "platform-tools"
+WORKDIR /work

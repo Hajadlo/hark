@@ -1,0 +1,4 @@
+<resources>
+    <string name="voice_input">hark voice input</string>
+    <string name="accessibility_description">Inserts your hark transcript into a text field. Direct keyboard insertion returns to the original field. The floating microphone is optional and can be turned off in hark settings. Window access detects the keyboard and focused editor. Audio goes only to your configured HTTPS server.</string>
+</resources>
