@@ -36,13 +36,7 @@ The chart shows the main ones. The score is
 weighted 60% English, 25% English with Czech names and 15% Czech with
 English terms. Lower is better:
 
-```mermaid
-xychart-beta
-    title "Word error rate on my own speech (%)"
-    x-axis ["Parakeet EN (Handy)", "FunASR", "Qwen3-ASR 0.6B", "Canary 1B", "Qwen3-ASR 1.7B", "Parakeet v3", "Whisper large-v3", "Whisper turbo"]
-    y-axis 0 --> 25
-    bar [21.2, 19.2, 15.9, 11.3, 10.6, 9.8, 6.4, 6.2]
-```
+<img alt="Word error rate by model: Whisper large-v3-turbo 6.2%, Whisper large-v3 6.4%, Parakeet v3 9.8%, Parakeet EN (Handy) 21.2%" src="docs/images/wer.svg" width="720">
 
 | Model | Word error rate | Czech names spelled right in English sentences | Warm latency |
 |---|---:|---:|---:|

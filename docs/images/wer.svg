@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="372" viewBox="0 0 720 372" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<rect width="720" height="372" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+<text x="20" y="30" font-size="16" font-weight="600" fill="#1f2328">Word error rate on my own mixed Czech/English speech</text>
+<text x="20" y="50" font-size="12.5" fill="#59636e">Lower is better · 60% English, 25% English with Czech names, 15% Czech with English terms</text>
+<text x="180" y="84.5" font-size="13" text-anchor="end" fill="#1f2328" font-weight="400">Parakeet EN (Handy)</text>
+<rect x="190" y="70" width="443.7" height="20" rx="3" fill="#afb8c1"/>
+<text x="639.7" y="84.5" font-size="13" fill="#1f2328" font-weight="400">21.2%</text>
+<text x="180" y="118.5" font-size="13" text-anchor="end" fill="#1f2328" font-weight="400">FunASR Nano</text>
+<rect x="190" y="104" width="401.0" height="20" rx="3" fill="#afb8c1"/>
+<text x="597.0" y="118.5" font-size="13" fill="#1f2328" font-weight="400">19.2%</text>
+<text x="180" y="152.5" font-size="13" text-anchor="end" fill="#1f2328" font-weight="400">Qwen3-ASR 0.6B</text>
+<rect x="190" y="138" width="332.9" height="20" rx="3" fill="#afb8c1"/>
+<text x="528.9" y="152.5" font-size="13" fill="#1f2328" font-weight="400">15.9%</text>
+<text x="180" y="186.5" font-size="13" text-anchor="end" fill="#1f2328" font-weight="400">Canary 1B v2</text>
+<rect x="190" y="172" width="236.5" height="20" rx="3" fill="#afb8c1"/>
+<text x="432.5" y="186.5" font-size="13" fill="#1f2328" font-weight="400">11.3%</text>
+<text x="180" y="220.5" font-size="13" text-anchor="end" fill="#1f2328" font-weight="400">Qwen3-ASR 1.7B</text>
+<rect x="190" y="206" width="221.4" height="20" rx="3" fill="#afb8c1"/>
+<text x="417.4" y="220.5" font-size="13" fill="#1f2328" font-weight="400">10.6%</text>
+<text x="180" y="254.5" font-size="13" text-anchor="end" fill="#1f2328" font-weight="400">Parakeet v3</text>
+<rect x="190" y="240" width="204.9" height="20" rx="3" fill="#afb8c1"/>
+<text x="400.9" y="254.5" font-size="13" fill="#1f2328" font-weight="400">9.8%</text>
+<text x="180" y="288.5" font-size="13" text-anchor="end" fill="#1f2328" font-weight="400">Whisper large-v3</text>
+<rect x="190" y="274" width="133.6" height="20" rx="3" fill="#afb8c1"/>
+<text x="329.6" y="288.5" font-size="13" fill="#1f2328" font-weight="400">6.4%</text>
+<text x="180" y="322.5" font-size="13" text-anchor="end" fill="#1f2328" font-weight="600">Whisper large-v3-turbo</text>
+<rect x="190" y="308" width="129.0" height="20" rx="3" fill="#0969da"/>
+<text x="325.0" y="322.5" font-size="13" fill="#1f2328" font-weight="600">6.2%</text>
+<text x="190" y="358" font-size="11.5" fill="#59636e">Same Q8 GGUF builds, warm runs on an RTX 5080, transcribe.cpp on Vulkan.</text>
+</svg>
